@@ -15,14 +15,16 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    if: github.event.pull_request.head.repo.full_name == github.repository
+
     steps:
-      - name: Récupération du pull request
+      - name: Vérification du repo
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Installation de python 3.12
+      - name: Installation de python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -33,15 +35,17 @@ jobs:
       - name: Lancement des scripts
         run: python .github/scripts/index.py
 
-      - name: Ajout du commit
+      - name: Ajout des changements (commit)
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
           git add index.json
 
-          git diff --cached --quiet && echo "No changes" && exit 0
+          git diff --cached --quiet && exit 0
 
           git commit -m "chore: update index.json"
+
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
 
           git push origin HEAD:${{ github.head_ref }}
