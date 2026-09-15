@@ -2,7 +2,7 @@
 title: Délégation du territoire de l'empire Ytèque
 date: 02 mois-A 0
 date-fichier: 24 juin 2026
-tags:
+tag:
 ---
 
 ## Information
